@@ -3,21 +3,21 @@ import g4f
 
 
 providers = [
-  "Aichat",
-  "ChatBase",
-  "GeekGpt",
-  "GptGo",
-  "You",
-  "Yqcloud",
-  "Liaobots",
-  "Phind",
-  "Raycast",
-  "Aivvm",
-  "GptChatly",
-  "Lockchat",
-  "Myshell",
-  "Bard",
-  "Bing",
+    #"Aichat",
+    "ChatBase",
+    #"GeekGpt",
+    "GptGo",
+    #"You",
+    "Yqcloud",
+    "Liaobots",
+    #"Phind",
+    #"Raycast",
+    #"Aivvm",
+    #"GptChatly",
+    #"Lockchat",
+    #"Myshell",
+    "Bard",
+    "Bing",
 ]
 
 models = [
