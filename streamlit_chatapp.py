@@ -6,7 +6,6 @@ providers = [
     #"Aichat",
     "ChatBase",
     #"GeekGpt",
-    "GptGo",
     #"You",
     "Yqcloud",
     "Liaobots",
@@ -18,6 +17,7 @@ providers = [
     #"Myshell",
     "Bard",
     "Bing",
+    "GptGo",
 ]
 
 models = [
@@ -29,6 +29,9 @@ models = [
 
 title_placeholder = st.empty()
 title_placeholder.title("")
+
+if "title_generated" not in st.session_state:
+    st.session_state["title_generated"] = False
 
 if "openai_model" not in st.session_state:
     st.session_state["model"] = "gpt-3.5-turbo"
@@ -64,15 +67,15 @@ with st.sidebar:
     stream_placeholder = st.empty()
     selected_model = stream_placeholder.selectbox("Select a model", models, index=len(models)-1)
     st.session_state.model = selected_model
-    title_placeholder.title("Using " + selected_model + " with " + st.session_state.provider.__name__)
+
+    if not st.session_state.title_generated:
+        title_placeholder.title("Using " + selected_model + " with " + st.session_state.provider.__name__)
 
     model_placeholder = st.empty()
     use_streaming = model_placeholder.radio("Use streaming for answers?", ["Yes", "No"])
     st.session_state.stream = use_streaming == "Yes"
 
     st.button("Reset", on_click=double_reset)
-
-first = True
 
 # Accept user input
 if prompt := st.chat_input("What is up?"):
@@ -100,14 +103,15 @@ if prompt := st.chat_input("What is up?"):
         message_placeholder.markdown(full_response)
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-    if first:
+    if not st.session_state.title_generated:
         content = [{"role": m["role"], "content": m["content"]} for m in st.session_state.messages]
-        content.append({"role": "user", "content": "Can you generate a title for this conversation without any additional words, just the title?"})
+        content.append({"role": "user", "content": "Can you generate a short title for this conversation?"})
         title = g4f.ChatCompletion.create(
             model=st.session_state.model,
             messages=content,
             provider=st.session_state.provider,
+            stream=False,
         )
         title = title[title.find("**")+2:title.rfind("**")]
         title_placeholder.title(title)
-        first = False
+        st.session_state.title_generated = True
