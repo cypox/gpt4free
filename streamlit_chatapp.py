@@ -105,13 +105,16 @@ if prompt := st.chat_input("What is up?"):
 
     if not st.session_state.title_generated:
         content = [{"role": m["role"], "content": m["content"]} for m in st.session_state.messages]
-        content.append({"role": "user", "content": "Can you generate a short title for this conversation?"})
+        content.append({"role": "user", "content": "Can you generate a four or five word title for this conversation?"})
         title = g4f.ChatCompletion.create(
             model=st.session_state.model,
             messages=content,
             provider=st.session_state.provider,
             stream=False,
         )
-        title = title[title.find("**")+2:title.rfind("**")]
-        title_placeholder.title(title)
+        if "**" in title:
+            title = title[title.find("**")+2:title.rfind("**")]
+        if "\"" in title:
+            title = title.strip("\"")
+        title_placeholder.title(title.strip())
         st.session_state.title_generated = True
