@@ -89,12 +89,17 @@ if prompt := st.chat_input("What is up?"):
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
         full_response = ""
+        max_len = 4096
+        history = [{"role": m["role"], "content": m["content"]} for m in st.session_state.messages]
+        trimmed_history = []
+        for entry in reversed(history):
+            max_len -= len(entry["content"])
+            if max_len > 0:
+                trimmed_history.insert(0, entry)
+        history = trimmed_history
         for response in g4f.ChatCompletion.create(
             model=st.session_state.model,
-            messages=[
-                {"role": m["role"], "content": m["content"]}
-                for m in st.session_state.messages
-            ],
+            messages=history,
             provider=st.session_state.provider,
             stream=st.session_state.stream,
         ):
