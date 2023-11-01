@@ -51,6 +51,7 @@ for message in st.session_state.messages:
 def double_reset():
     reset_session()
     reset_session()
+    first = True
 
 def reset_session():
     st.session_state.messages.clear()
@@ -70,6 +71,8 @@ with st.sidebar:
     st.session_state.stream = use_streaming == "Yes"
 
     st.button("Reset", on_click=double_reset)
+
+first = True
 
 # Accept user input
 if prompt := st.chat_input("What is up?"):
@@ -96,3 +99,15 @@ if prompt := st.chat_input("What is up?"):
             message_placeholder.markdown(full_response + "▌")
         message_placeholder.markdown(full_response)
     st.session_state.messages.append({"role": "assistant", "content": full_response})
+
+    if first:
+        content = [{"role": m["role"], "content": m["content"]} for m in st.session_state.messages]
+        content.append({"role": "user", "content": "Can you generate a title for this conversation without any additional words, just the title?"})
+        title = g4f.ChatCompletion.create(
+            model=st.session_state.model,
+            messages=content,
+            provider=st.session_state.provider,
+        )
+        title = title[title.find("**")+2:title.rfind("**")]
+        title_placeholder.title(title)
+        first = False
