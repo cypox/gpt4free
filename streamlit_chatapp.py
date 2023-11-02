@@ -9,7 +9,7 @@ providers = [
     #"You",
     "Yqcloud",
     "Liaobots",
-    #"Phind",
+    "Phind",
     #"Raycast",
     #"Aivvm",
     #"GptChatly",
